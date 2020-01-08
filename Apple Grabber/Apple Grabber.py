@@ -228,7 +228,7 @@ while True:
         score += 1
         pen.clear()
         pen.write("Score: {}".format(score), align="center", font=("Courier", 18, "normal"))
-        apple.goto(10000, 10000)
+        apple.goto(20000, 10000)
         new_apple()
         start_time = time.time()
 
@@ -242,13 +242,13 @@ while True:
         new_apple()
         start_time = time.time()
 
-    # time mechanics
+    # timer mechanic implementation
     t = -(start_time - time.time())
     e = t
     clock()
     
-    #death by time
-    '''if e > 10:
+    # death by time
+    if e > 10:
         death = True
         endgame_alt()
     if e > 7 and score > 5:
@@ -256,6 +256,6 @@ while True:
         endgame_alt()
     if e > 5 and score >= 10:
         death = True
-        endgame_alt()'''
+        endgame_alt()
 
     wn.update()
