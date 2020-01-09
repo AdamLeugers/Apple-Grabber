@@ -3,14 +3,16 @@ from random import randint
 import time
 import winsound
 import sys
+import keyboard
+
 
 wn = turtle.Screen()
 wn.title("Apple grabber")
 wn.setup(width=1500, height=800)
-wn.bgcolor("black")
-wn.tracer(0)
+
 
 # score default
+global score
 score = 0
 
 # default var settings
@@ -20,6 +22,11 @@ global col_w
 global col_a
 global col_b
 global death
+global keep_looping
+global gameplay
+
+gameplay = True
+keep_looping = True
 col_w = False
 col_a = False
 col_b = False
@@ -28,22 +35,26 @@ apple_positions = [(10000, 0)]
 napple_positions = [(0, 100000)]
 
 # player setup
-turtle_obj = turtle.Turtle()
-turtle_obj.speed(0)
-turtle_obj.shape("square")
-turtle_obj.shapesize(stretch_wid=1, stretch_len=2)
-turtle_obj.color("lime green")
-turtle_obj.goto(0, 0)
-turtle_obj.setheading(90)
+def make_player():
+    global turtle_obj
+    turtle_obj = turtle.Turtle()
+    turtle_obj.speed(0)
+    turtle_obj.shape("square")
+    turtle_obj.shapesize(stretch_wid=1, stretch_len=2)
+    turtle_obj.color("lime green")
+    turtle_obj.goto(0, 0)
+    turtle_obj.setheading(90)
 
 # Score block
-pen = turtle.Turtle()
-pen.speed(0)
-pen.penup()
-pen.hideturtle()
-pen.color("white")
-pen.goto(0, 325)
-pen.write("Score: 0", align="center", font=("Courier", 18, "normal"))
+def make_score():
+    global pen
+    pen = turtle.Turtle()
+    pen.speed(0)
+    pen.penup()
+    pen.hideturtle()
+    pen.color("white")
+    pen.goto(0, 325)
+    pen.write("Score: 0", align="center", font=("Courier", 18, "normal"))
 
 # right wall
 global a
@@ -117,12 +128,6 @@ def t_fw():
 def t_dw():
     turtle_obj.backward(22.5)
 
-# Movement controls
-wn.listen()
-wn.onkeyrelease(t_cw, "d")
-wn.onkeyrelease(t_ccw, "a")
-wn.onkeypress(t_fw, "w")
-
 def new_apple():
     global napple
     napple = turtle.Turtle()
@@ -138,41 +143,38 @@ def move_napple():
     napple.goto(100000, 0)
 
 def end_loop():
-    for i in range(5):
-        pen.clear()
+    global keep_looping
+    global death
+    global col_w
+    while keep_looping == True:
+        for i in range(1):
+            pen.clear()
+            pen.goto(0, 0)
+            pen.write("YOU DIED!", align="center", font=("Courier", 48, "bold"))
+            time.sleep(5)
+            pen.clear()
+            pen.write("Score: {}".format(score), align="center", font=("Courier", 48, "bold"))
+            time.sleep(3)
+            turtle.clearscreen()
+            wn.bgcolor("black")
+            wn.tracer(0)
+        break
+    pen.clear()
+    for i in range(1000):
         pen.goto(0, 0)
-        pen.write("YOU DIED!", align="center", font=("Courier", 48, "bold"))
-        time.sleep(5)
-        pen.clear()
-        pen.write("Score: {}".format(score), align="center", font=("Courier", 48, "bold"))
-        time.sleep(3)
-        turtle.clearscreen()
-        wn.bgcolor("black")
-        wn.tracer(0)
-    sys.exit()
-
+        pen.write("If you want to play again,\n   press the \"R\" key.", align="center", font=("Courier", 48, "bold"))
+        try:
+            if keyboard.is_pressed("r"):
+                turtle.clearscreen()
+                death = False
+                col_w = False
+                start_game()
+                break
+        except:
+            print("")
 def endgame():
     while death == True:
         end_loop()
-
-def alt_end_loop():
-    for i in range(5):
-        pen.clear()
-        pen.goto(0, 0)
-        pen.write("YOU'RE TOO SLOW!", align="center", font=("Courier", 48, "bold"))
-        time.sleep(5)
-        pen.clear()
-        pen.write("Score: {}".format(score), align="center", font=("Courier", 48, "bold"))
-        time.sleep(3)
-        turtle.clearscreen()
-        wn.bgcolor("black")
-        wn.tracer(0)
-    sys.exit()
-
-def endgame_alt():
-    while death == True:
-        winsound.PlaySound("death sound 2", winsound.SND_ASYNC)
-        alt_end_loop()
 
 # timer
 def clock():
@@ -186,20 +188,50 @@ def clock():
     timer.clear()
 
 # first apple
-apple = turtle.Turtle()
-apple.speed(0)
-apple.penup()
-apple.color("red")
-apple.shape("circle")
-apple.goto(randint(-a + 25, a - 25), randint(-d + 25, d - 25))
-apple_positions.insert(0, apple.pos())
+def make_first_apple():
+    global apple
+    apple = turtle.Turtle()
+    apple.speed(0)
+    apple.penup()
+    apple.color("red")
+    apple.shape("circle")
+    apple.goto(randint(-a + 25, a - 25), randint(-d + 25, d - 25))
+    apple_positions.insert(0, apple.pos())
 
 # timer setup
-start_time = time.time()
-t = time.time() - start_time
+def start_timer():
+    global start_time
+    global t
+    start_time = time.time()
+    t = time.time() - start_time
 
-build_walls()
-while True:
+def start_game():
+    global gameplay
+    global score
+    global t
+    global e
+    e = 0
+    t = 0
+    score = 0
+    gameplay == True
+    col_w == False
+    death == False
+    keep_looping == True
+    wn.bgcolor("black")
+    wn.tracer(0)
+    make_player()
+    build_walls()
+    make_score()
+    start_timer()
+    make_first_apple()
+    wn.listen()
+    wn.onkeyrelease(t_cw, "d")
+    wn.onkeyrelease(t_ccw, "a")
+    wn.onkeypress(t_fw, "w")
+
+start_game()
+
+while gameplay == True:
 
     # top wall collision
     if turtle_obj.ycor() > d - 15:
@@ -265,12 +297,15 @@ while True:
     # death by time
     if e > 10:
         death = True
-        endgame_alt()
+        winsound.PlaySound("death sound 2", winsound.SND_ASYNC)
+        endgame()
     if e > 7 and score > 5:
         death = True
-        endgame_alt()
+        winsound.PlaySound("death sound 2", winsound.SND_ASYNC)
+        endgame()
     if e > 5 and score >= 10:
         death = True
-        endgame_alt()
+        winsound.PlaySound("death sound 2", winsound.SND_ASYNC)
+        endgame()
 
     wn.update()
