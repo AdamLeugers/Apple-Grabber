@@ -50,45 +50,58 @@ global a
 global b
 a = 750
 b = 0
-rw = turtle.Turtle()
-rw.speed(0)
-rw.shape("square")
-rw.shapesize(stretch_wid=41, stretch_len=1)
-rw.color("white")
-rw.penup()
-rw.goto(int(a), int(b))
+def rw_build():
+
+    rw = turtle.Turtle()
+    rw.speed(0)
+    rw.shape("square")
+    rw.shapesize(stretch_wid=41, stretch_len=1)
+    rw.color("white")
+    rw.penup()
+    rw.goto(int(a), int(b))
 
 # left wall
-lw = turtle.Turtle()
-lw.speed(0)
-lw.shape("square")
-lw.shapesize(stretch_wid=41, stretch_len=1)
-lw.color("white")
-lw.penup()
-lw.goto(int(-a), int(b))
+def lw_build():
+    lw = turtle.Turtle()
+    lw.speed(0)
+    lw.shape("square")
+    lw.shapesize(stretch_wid=41, stretch_len=1)
+    lw.color("white")
+    lw.penup()
+    lw.goto(int(-a), int(b))
 
 # top wall
 global c
 global d
 c = 0
 d = 400
-top_w = turtle.Turtle()
-top_w.speed(0)
-top_w.shape("square")
-top_w.shapesize(stretch_wid=1, stretch_len=75)
-top_w.color("white")
-top_w.penup()
-top_w.goto(int(c), int(d))
+
+def tw_build():
+    tw = turtle.Turtle()
+    tw.speed(0)
+    tw.shape("square")
+    tw.shapesize(stretch_wid=1, stretch_len=75)
+    tw.color("white")
+    tw.penup()
+    tw.goto(int(c), int(d))
 
 # bottom wall
-bot_w = turtle.Turtle()
-bot_w.speed(0)
-bot_w.shape("square")
-bot_w.shapesize(stretch_wid=1, stretch_len=75)
-bot_w.color("white")
-bot_w.penup()
-bot_w.goto(int(c), int(-d))
+def bw_build():
+    bw = turtle.Turtle()
+    bw.speed(0)
+    bw.shape("square")
+    bw.shapesize(stretch_wid=1, stretch_len=75)
+    bw.color("white")
+    bw.penup()
+    bw.goto(int(c), int(-d))
 
+# build walls
+
+def build_walls():
+    rw_build()
+    lw_build()
+    tw_build()
+    bw_build()
 # Movement functions
 def t_cw():
     turtle_obj.right(22.5)
@@ -185,7 +198,9 @@ apple_positions.insert(0, apple.pos())
 start_time = time.time()
 t = time.time() - start_time
 
+build_walls()
 while True:
+
     # top wall collision
     if turtle_obj.ycor() > d - 15:
         col_w = True
