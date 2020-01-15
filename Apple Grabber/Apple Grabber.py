@@ -2,18 +2,17 @@ import turtle
 from random import randint
 import time
 import winsound
-import sys
+import random
 import keyboard
 
+colors = ["red", "green", "blue", "orange", "purple", "pink", "yellow"]
 
 wn = turtle.Screen()
 wn.title("Apple grabber")
 wn.setup(width=1500, height=800)
 
-
 # score default
 global score
-score = 0
 
 # default var settings
 global t
@@ -23,9 +22,9 @@ global col_a
 global col_b
 global death
 global keep_looping
-global gameplay
+global game_play
 
-gameplay = True
+game_play = True
 keep_looping = True
 col_w = False
 col_a = False
@@ -33,6 +32,7 @@ col_b = False
 death = False
 apple_positions = [(10000, 0)]
 napple_positions = [(0, 100000)]
+
 
 # player setup
 def make_player():
@@ -45,6 +45,7 @@ def make_player():
     turtle_obj.goto(0, 0)
     turtle_obj.setheading(90)
 
+
 # Score block
 def make_score():
     global pen
@@ -56,13 +57,15 @@ def make_score():
     pen.goto(0, 325)
     pen.write("Score: 0", align="center", font=("Courier", 18, "normal"))
 
+
 # right wall
 global a
 global b
 a = 750
 b = 0
-def rw_build():
 
+
+def rw_build():
     rw = turtle.Turtle()
     rw.speed(0)
     rw.shape("square")
@@ -70,6 +73,7 @@ def rw_build():
     rw.color("white")
     rw.penup()
     rw.goto(int(a), int(b))
+
 
 # left wall
 def lw_build():
@@ -80,6 +84,7 @@ def lw_build():
     lw.color("white")
     lw.penup()
     lw.goto(int(-a), int(b))
+
 
 # top wall
 global c
@@ -96,6 +101,7 @@ def tw_build():
     tw.penup()
     tw.goto(int(c), int(d))
 
+
 # bottom wall
 def bw_build():
     bw = turtle.Turtle()
@@ -106,6 +112,7 @@ def bw_build():
     bw.penup()
     bw.goto(int(c), int(-d))
 
+
 # build walls
 
 def build_walls():
@@ -113,40 +120,49 @@ def build_walls():
     lw_build()
     tw_build()
     bw_build()
+
+
 # Movement functions
 def t_cw():
     turtle_obj.right(22.5)
     winsound.PlaySound("blip noise", winsound.SND_ASYNC)
 
+
 def t_ccw():
     turtle_obj.left(22.5)
     winsound.PlaySound("blip noise", winsound.SND_ASYNC)
 
+
 def t_fw():
     turtle_obj.forward(22.5)
+
 
 def t_dw():
     turtle_obj.backward(22.5)
 
+
+# noinspection DuplicatedCode
 def new_apple():
     global napple
     napple = turtle.Turtle()
     napple.speed(0)
     napple.penup()
-    napple.color("red")
+    napple.color(random.choice(colors))
     napple.shape("circle")
     napple.goto(randint(-a + 25, a - 25), randint(-d + 25, d - 25))
     napple_positions.insert(0, napple.pos())
+
 
 # apple removal after collection
 def move_napple():
     napple.goto(100000, 0)
 
+
 def end_loop():
     global keep_looping
     global death
     global col_w
-    while keep_looping == True:
+    while keep_looping:
         for i in range(1):
             pen.clear()
             pen.goto(0, 0)
@@ -155,6 +171,7 @@ def end_loop():
             pen.clear()
             pen.write("Score: {}".format(score), align="center", font=("Courier", 48, "bold"))
             time.sleep(3)
+            # noinspection PyUnresolvedReferences
             turtle.clearscreen()
             wn.bgcolor("black")
             wn.tracer(0)
@@ -172,9 +189,12 @@ def end_loop():
                 break
         except:
             print("")
+
+
 def endgame():
-    while death == True:
+    while death:
         end_loop()
+
 
 # timer
 def clock():
@@ -187,6 +207,7 @@ def clock():
     timer.write(int(e), align="right", font=("Courier", 18, "normal"))
     timer.clear()
 
+
 # first apple
 def make_first_apple():
     global apple
@@ -198,6 +219,7 @@ def make_first_apple():
     apple.goto(randint(-a + 25, a - 25), randint(-d + 25, d - 25))
     apple_positions.insert(0, apple.pos())
 
+
 # timer setup
 def start_timer():
     global start_time
@@ -205,18 +227,16 @@ def start_timer():
     start_time = time.time()
     t = time.time() - start_time
 
+
 def start_game():
-    global gameplay
+    global game_play
     global score
     global t
     global e
     e = 0
     t = 0
     score = 0
-    gameplay == True
-    col_w == False
-    death == False
-    keep_looping == True
+    game_play = True
     wn.bgcolor("black")
     wn.tracer(0)
     make_player()
@@ -229,9 +249,10 @@ def start_game():
     wn.onkeyrelease(t_ccw, "a")
     wn.onkeypress(t_fw, "w")
 
+
 start_game()
 
-while gameplay == True:
+while game_play:
 
     # top wall collision
     if turtle_obj.ycor() > d - 15:
@@ -250,7 +271,7 @@ while gameplay == True:
         col_w = True
 
     # death by wall collision
-    if col_w == True:
+    if col_w:
         winsound.PlaySound("death sound 2", winsound.SND_ASYNC)
         time.sleep(3)
         death = True
@@ -270,7 +291,7 @@ while gameplay == True:
         col_b = False
 
     # 1st apple collection
-    if col_a == True and score == 0:
+    if col_a and score == 0:
         winsound.PlaySound("score blip", winsound.SND_ASYNC)
         score += 1
         pen.clear()
@@ -280,7 +301,7 @@ while gameplay == True:
         start_time = time.time()
 
     # additional apple collection
-    if col_b == True and score >= 1:
+    if col_b and score >= 1:
         winsound.PlaySound("score blip", winsound.SND_ASYNC)
         score += 1
         pen.clear()
@@ -293,7 +314,7 @@ while gameplay == True:
     t = -(start_time - time.time())
     e = t
     clock()
-    
+
     # death by time
     if e > 10:
         death = True
